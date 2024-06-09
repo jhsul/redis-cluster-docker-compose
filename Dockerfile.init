@@ -1,0 +1,9 @@
+FROM alpine as base
+
+RUN apk update
+RUN apk add bind-tools
+RUN apk add redis
+
+COPY init.sh /usr/app/init.sh
+
+RUN chmod +x /usr/app/init.sh

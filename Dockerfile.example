@@ -1,0 +1,5 @@
+FROM python as base
+
+RUN pip install redis
+
+COPY ./example.py /usr/app/example.py

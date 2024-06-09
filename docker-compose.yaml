@@ -1,0 +1,32 @@
+services:
+  # Redis cluster nodes
+  redis-cluster:
+    image: redis
+    command: ["redis-server", "/usr/local/etc/redis/redis.conf"]
+    expose:
+      - 6379
+      - 16379
+    volumes:
+      - ./redis.conf:/usr/local/etc/redis/redis.conf
+    deploy:
+      mode: replicated
+      replicas: 6 # make sure this is the same as REDIS_NODES in init.sh
+      endpoint_mode: vip
+
+  # Script to initialize the cluster
+  redis-cluster-init:
+    build:
+      context: .
+      dockerfile: Dockerfile.init
+    command: ["sh", "/usr/app/init.sh"]
+    profiles:
+      - init
+
+  # (Optional) Python app that connects to the redis cluster
+  example-app:
+    build:
+      context: .
+      dockerfile: Dockerfile.example
+    command: ["python", "/usr/app/example.py"]
+    profiles:
+      - example
